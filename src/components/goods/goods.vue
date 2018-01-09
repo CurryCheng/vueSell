@@ -1,41 +1,45 @@
 <template>
+  <div>
     <div class="goods">
-        <div class="menu-wrap" ref="menuWrap">
-            <ul>
-                <li v-for="(i,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index)">
+      <div class="menu-wrap" ref="menuWrap">
+        <ul>
+          <li v-for="(i,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index)">
                     <span class="text borderOne">
                         <span v-show="i.type>0" class="icon" :class="classMap[i.type]"></span>{{i.name}}
                     </span>
-                </li>
-            </ul>
-        </div>
-        <div class="foods-wrap" ref="foodsWrap">
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrap" ref="foodsWrap">
+        <ul>
+          <li v-for="i in goods" class="foods-list foods-list-hock">
+            <h1 class="title">{{ i.name}}</h1>
             <ul>
-                <li v-for="i in goods" class="foods-list foods-list-hock">
-                    <h1 class="title">{{ i.name}}</h1>
-                    <ul>
-                        <li v-for="j in i.foods" class="food-item borderOne">
-                            <div class="icon"><img :src="j.icon" alt="" width="57" height="57"></div>
-                            <div class="content">
-                                <h2 class="name">{{j.name}}</h2>
-                                <p class="desc">{{j.description}}</p>
-                                <div class="extra">
-                                    <span class="count">月销售{{j.sellCount}}份</span><span>好评率{{j.rating}}%</span>
-                                </div>
-                                <div class="price">
-                                    <span class="now">￥{{j.price}}</span><span class="old" v-show="j.oldPrice">￥{{j.oldPrice}}</span>
-                                </div>
-                                <div class="carControl-wrap">
-                                    <carControl :food="j"></carControl>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
+              <li v-for="j in i.foods" class="food-item borderOne" @click="selectFood(j,$event)">
+                <div class="icon"><img :src="j.icon" alt="" width="57" height="57"></div>
+                <div class="content">
+                  <h2 class="name">{{j.name}}</h2>
+                  <p class="desc">{{j.description}}</p>
+                  <div class="extra">
+                    <span class="count">月销售{{j.sellCount}}份</span><span>好评率{{j.rating}}%</span>
+                  </div>
+                  <div class="price">
+                    <span class="now">￥{{j.price}}</span><span class="old" v-show="j.oldPrice">￥{{j.oldPrice}}</span>
+                  </div>
+                  <div class="carControl-wrap">
+                    <carControl :food="j"></carControl>
+                  </div>
+                </div>
+              </li>
             </ul>
-        </div>
-        <shopCar ref="shopCar" :select-foods ='selectFoods' :deliveryPrice="seller.deliveryPrice" :min-price="seller.minPrice"></shopCar>
+          </li>
+        </ul>
+      </div>
+      <shopCar ref="shopCar" :select-foods ='selectFoods' :deliveryPrice="seller.deliveryPrice" :min-price="seller.minPrice"></shopCar>
     </div>
+    <food :food="selectedFood" ref="food"></food>
+  </div>
+
 </template>
 
 <script type="text/ecmascript-6">
@@ -44,7 +48,7 @@
     import BScroll from 'better-scroll';
     import shopCar from '../shopcar/shopcar.vue'
     import carControl from '../carControl/carControl.vue'
-
+    import food from '../food/food.vue'
     import Vue from 'vue'
     window.eventHub = new Vue();
     export default {
@@ -58,6 +62,7 @@
                 goods: [],
                 listHeight: [],
                 scrollY: 0,
+                selectedFood: {}
             }
         },
         computed: {
@@ -128,10 +133,15 @@
             addCar(target) {
                 this.$refs.shopCar.drop(target);
             },
+          selectFood(j,event) {
+              this.selectedFood = j;
+              this.$refs.food.show();
+          }
         },
         components: {
             shopCar,
             carControl,
+            food
         }
     };
 </script>
