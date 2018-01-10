@@ -26,7 +26,6 @@
                 }else{
                     this.food.count ++;
                 }
-                window.eventHub.$emit('add-car',this.$refs.theCar);
             },
             decreaseCar() {
                 if(this.food.count){

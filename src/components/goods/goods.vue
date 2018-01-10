@@ -50,7 +50,6 @@
     import carControl from '../carControl/carControl.vue'
     import food from '../food/food.vue'
     import Vue from 'vue'
-    window.eventHub = new Vue();
     export default {
         props: {
             seller: {
@@ -99,7 +98,6 @@
                 }
             });
             this.classMap = ['decrease','discount','special','invoice','guarantee'];
-            window.eventHub.$on('add-car',this.addCar);
         },
         methods: {
             initScroll() {

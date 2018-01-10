@@ -1,11 +1,11 @@
 <template>
   <div class="rating-select">
     <div class="rating-type borderOne">
-      <span @click="select(2)" class="block positive" :class="{'active':selectedType===2}">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
-      <span @click="select(0)" class="block positive" :class="{'active':selectedType===0}">{{desc.positive}}<span class="count">{{positives.length}}</span></span>
-      <span @click="select(1)" class="block negative" :class="{'active':selectedType===1}">{{desc.negative}}<span class="count">{{negatives.length}}</span></span>
+      <span @click="select(2)" class="block positive" :class="{'active':selectType===2}">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
+      <span @click="select(0)" class="block positive" :class="{'active':selectType===0}">{{desc.positive}}<span class="count">{{positives.length}}</span></span>
+      <span @click="select(1)" class="block negative" :class="{'active':selectType===1}">{{desc.negative}}<span class="count">{{negatives.length}}</span></span>
     </div>
-    <div @click="toggleContent" class="switch" :class="{'on':onlyContented}">
+    <div @click="toggleContent" class="switch" :class="{'on':onlyContent}">
       <span class="icon-check_circle"></span>
       <span class="text">只看有内容的评价</span>
     </div>
@@ -14,7 +14,6 @@
 
 <script type="text/ecmascript-6">
     /* eslint-disable */
-    import Vue from 'vue'
 
     const POSITIVE = 0;
     const NEGATIVE = 1;
@@ -48,18 +47,10 @@
       },
       methods: {
         select(type) {
-          this.selectedType = type;
-          window.eventBus.$emit('select',type);
+          this.$emit('select',type);
         },
         toggleContent() {
-          this.onlyContented = !this.onlyContented;
-          window.eventBus.$emit('toggleContent',this.onlyContented);
-        }
-      },
-      data() {
-        return {
-          selectedType: ALL,
-          onlyContented: false
+          this.$emit('toggle');
         }
       },
       computed: {
