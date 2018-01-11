@@ -33,9 +33,9 @@
         :ratings="ratings"></ratingSelect>
       <div class="rating-wrap">
         <ul>
-          <li v-for="rating in ratings" class="rating-item">
+          <li v-for="rating in ratings" v-show="needShow(rating.rateType,rating.text)" class="rating-item borderOne">
             <div class="avatar">
-              <img :src="rating.avatar">
+              <img :src="rating.avatar" width="28" height="28">
             </div>
             <div class="content">
               <h1 class="name">{{rating.username}}</h1>
@@ -46,7 +46,10 @@
               <p class="text">{{rating.text}}</p>
               <div class="recommend" v-show="rating.recommend && rating.recommend.length">
                 <span class="icon-thumb_up"></span>
-                <span v-for="item in rating.recommend">{{item}}</span>
+                <span v-for="item in rating.recommend" class="item">{{item}}</span>
+              </div>
+              <div class="time">
+                {{rating.rateTime | formatDate}}
               </div>
             </div>
           </li>
@@ -62,6 +65,7 @@
   import star from '../star/star.vue';
   import ratingSelect from '../ratingSelect/ratingSelect.vue';
   import split from '../split/split.vue';
+  import {formatDate} from '../../common/js/date'
 
   const ALL = 2;
     export default {
@@ -82,6 +86,12 @@
           onlyContent: true
         }
       },
+      filters: {
+        formatDate(time) {
+          let date = new Date(time);
+          return formatDate(date, 'yyyy-MM-dd hh:mm');
+        }
+      },
       created() {
         this.$http.get('http://localhost:3000/ratings').then((res) => {
           if(res){
@@ -97,6 +107,16 @@
           this.scroll = new BScroll(this.$refs.ratings,{
             click: true
           });
+        },
+        needShow(type,text) {
+          if(this.onlyContent && !text) {
+            return false
+          }
+          if(this.selectType === ALL) {
+            return true;
+          }else{
+            return type ===this.selectType;
+          }
         },
         selectRating(type) {
           this.selectType = type;
@@ -116,9 +136,11 @@
 
 
 <style lang="less" rel="stylesheet/less" scoped>
+  @import "../../common/less/mixin";
+
   .ratings{
     position: absolute;
-    top: 174px;
+    top: 180px;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -192,6 +214,80 @@
           .delivery{
             margin-left: 12px;
             font-size: 12px;
+            color: rgb(147,153,159);
+          }
+        }
+      }
+    }
+    .rating-wrap{
+      padding: 0 18px;
+      .rating-item{
+        display: flex;
+        padding: 18px 0;
+        .border-1px(rgba(7,17,27,0.1));
+        .avatar{
+          flex: 0 0 28px;
+          width: 28px;
+          margin-right: 12px;
+          img{
+            border-radius: 50%;
+          }
+        }
+        .content{
+          position: relative;
+          flex: 1;
+          .name{
+            margin-bottom: 4px;
+            line-height: 12px;
+            font-size: 10px;
+            color: rgb(7,17,27);
+          }
+          .star-wrap{
+            margin-bottom: 6px;
+            font-size: 0;
+            .star{
+              display: inline-block;
+              margin-right: 6px;
+              vertical-align: top;
+            }
+            .delivery{
+              display: inline-block;
+              vertical-align: top;
+              line-height: 12px;
+              font-size: 10px;
+              color: rbg(147,153,159);
+            }
+          }
+          .text{
+            margin-bottom: 8px;
+            line-height: 18px;
+            color: rgb(7,17,27);
+            font-size: 12px;
+          }
+          .recommend{
+            line-height: 16px;
+            font-size: 0;
+            .icon-thumb_up, .item{
+              display: inline-block;
+              margin: 0 8px 4px 0;
+              font-size: 9px;
+            }
+            .icon-thumb_up{
+              color: rgb(0,160,220);
+            }
+            .item{
+              padding: 0 6px;
+              border: 1px solid rgba(7,17,27,0.1);
+              border-radius: 1px;
+              color: rgb(147,153,159);
+            }
+          }
+          .time{
+            position: absolute;
+            top: 0;
+            right: 0;
+            line-height: 12px;
+            font-size: 10px;
             color: rgb(147,153,159);
           }
         }

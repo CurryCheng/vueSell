@@ -6,27 +6,29 @@
       <div class="tab-item"><router-link to="ratings">评论</router-link></div>
       <div class="tab-item"><router-link to="seller">商家</router-link></div>
     </div>
-    <router-view :seller="seller"></router-view>
+    <keep-alive><router-view :seller="seller" ></router-view></keep-alive>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  /* eslint-disable */
     import header from './components/header/header.vue';
-
-//    const ERR_OK = 0;
-
-    // eslint-disable-next-line
+    import {urlParse} from './common/js/util';
     export default {
         data() {
             return {
-                seller: {}
+                seller: {
+                  id: (() => {
+                    let queryParam = urlParse();
+                    return queryParam.id;
+                  })()
+                }
             }
         },
         created() {
-                this.$http.get('http://localhost:3000/seller').then((res) => {
+                this.$http.get('http://localhost:3000/seller?id=' + this.seller.id).then((res) => {
                     if(res){
-                        this.seller = res.data;
-                        console.log(this.seller);
+                        this.seller = Object.assign({},this.seller,res.data);
                     }
                 });
         },
